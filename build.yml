@@ -4,7 +4,7 @@
     raspbian_url: https://downloads.raspberrypi.org/raspbian_latest
     buildroot: /opt/buildroot
     mountpoint: /mnt/rpi
-    raspbian_image: 2016-05-10-raspbian-jessie-lite.img
+    raspbian_image: 2016-05-10-raspbian-jessie.img
     mount_offset: 70254592
     toolchain_url: https://github.com/nerves-project/nerves-toolchain/releases/download/v0.6.1/nerves-arm-unknown-linux-gnueabihf-linux-x86_64-v0.6.1.tar.xz
     toolchain_root: "{{ buildroot }}/nerves-arm-unknown-linux-gnueabihf-linux-x86_64-v0.6.0"
@@ -31,7 +31,8 @@
     get_url: url={{ raspbian_url }} dest={{ buildroot }}/raspbian.zip
     register: get_zip
 
-  - shell: unzip raspbian.zip chdir={{ buildroot }}
+  - name: unzip raspbian image
+    shell: unzip raspbian.zip chdir={{ buildroot }}
     when: get_zip|changed
 
   - shell: modprobe loop
