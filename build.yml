@@ -54,6 +54,9 @@
   - name: Set up cross compilation
     shell: ./fixQualifiedLibraryPaths {{ mountpoint }}/ {{ toolchain_root }}/bin/{{ gcc_prefix }}gcc chdir="{{ buildroot }}"
 
+  - name: Add toolchain sysroot to mount
+    shell: rsync -ua {{ toolchain_root}/sysroot/ {{ mountpoint }}
+
   - name: Get Qt
     git: repo=git://code.qt.io/qt/qt5.git dest="{{ buildroot }}/qt5" accept_hostkey=yes recursive=no update=no
     register: qt
