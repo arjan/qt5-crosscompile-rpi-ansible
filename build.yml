@@ -1,0 +1,70 @@
+---
+- hosts: buildhost
+  vars:
+    raspbian_url: https://downloads.raspberrypi.org/raspbian_lite_latest
+    buildroot: /opt/buildroot
+    mountpoint: /mnt/rpi
+    raspbian_image: 2016-05-10-raspbian-jessie-lite.img
+    mount_offset: 70254592
+    toolchain_url: https://github.com/nerves-project/nerves-toolchain/releases/download/v0.6.1/nerves-arm-unknown-linux-gnueabihf-linux-x86_64-v0.6.1.tar.xz
+    toolchain_root: "{{ buildroot }}/nerves-arm-unknown-linux-gnueabihf-linux-x86_64-v0.6.0"
+    prefix: /usr/local/qt5pi
+    gcc_prefix: arm-unknown-linux-gnueabihf-
+
+  tasks:
+
+  - name: Install required packages
+    apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
+    with_items:
+    - unzip
+    - git
+    - build-essential
+    - wget
+  
+  - name: Create required directories
+    file: path={{ item }} state=directory
+    with_items:
+    - "{{ buildroot }}"
+    - "{{ mountpoint }}"
+
+  - name: Get the raspbian image
+    get_url: url={{ raspbian_url }} dest={{ buildroot }}/raspbian.zip
+    register: get_zip
+
+  - shell: unzip raspbian.zip chdir={{ buildroot }}
+    when: get_zip|changed
+
+  - shell: modprobe loop
+
+  - name: Mount raspbian image
+    mount: name={{ mountpoint }} src={{ buildroot }}/{{ raspbian_image }} opts="loop,offset={{ mount_offset }}" state=mounted fstype=ext4
+
+  - name: Get the toolchain
+    get_url: url={{ toolchain_url }} dest={{ buildroot }}/toolchain.xz
+    register: get_toolchain
+
+  - name: Unarchive the toolchain
+    shell: tar xf toolchain.xz chdir={{ buildroot }}
+    when: get_toolchain|changed
+
+  - name: Get cross compile tools
+    copy: src=files/fixQualifiedLibraryPaths dest={{ buildroot }}/fixQualifiedLibraryPaths mode=0755
+
+  - name: Set up cross compilation
+    shell: ./fixQualifiedLibraryPaths {{ mountpoint }}/ {{ toolchain_root }}/bin/{{ gcc_prefix }}gcc chdir="{{ buildroot }}"
+
+  - name: Get Qt
+    git: repo=git://code.qt.io/qt/qt5.git dest="{{ buildroot }}/qt5" accept_hostkey=yes recursive=no
+    register: qt
+    
+  - name: Init Qt5
+    shell: ./init-repository chdir="{{ buildroot }}/qt5"
+    when: qt|changed
+
+  - name: Copy configure script
+    template: src=files/configure-qt5.j2 dest="{{ buildroot }}/qt5/configure-qt5" mode=0755
+    register: configure
+    
+  - name: Configure Qt5
+    shell: ./configure-qt5 chdir="{{ buildroot }}/qt5"
+    when: configure|changed

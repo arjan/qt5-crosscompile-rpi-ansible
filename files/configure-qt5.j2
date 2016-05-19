@@ -1,0 +1,26 @@
+exec ./configure \
+     -static \
+     -opengl es2 -device linux-rasp-pi-g++ \
+     -device-option CROSS_COMPILE={{ toolchain_root }}/bin/{{ gcc_prefix }} \
+     -sysroot {{ mountpoint }} \
+     -opensource -confirm-license \
+     -optimized-qmake -reduce-exports \
+     -release -make libs \
+     -prefix {{ prefix }} \
+     -hostprefix {{ prefix }} \
+     -no-qml-debug \
+     -no-pkg-config \
+     -qt-zlib \
+     -no-xkbcommon-evdev \
+     -no-xinput2 \
+     -no-xcb-xlib \
+     -no-pulseaudio \
+     -no-alsa \
+     -no-gtkstyle \
+     -no-compile-examples \
+     -no-dbus \
+     -no-xcb \
+     -no-kms \
+     -no-gbm \
+     -no-directfb \
+     -no-linuxfb 
