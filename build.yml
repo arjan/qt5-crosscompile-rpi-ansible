@@ -1,7 +1,7 @@
 ---
 - hosts: buildhost
   vars:
-    raspbian_url: https://downloads.raspberrypi.org/raspbian_lite_latest
+    raspbian_url: https://downloads.raspberrypi.org/raspbian_latest
     buildroot: /opt/buildroot
     mountpoint: /mnt/rpi
     raspbian_image: 2016-05-10-raspbian-jessie-lite.img
