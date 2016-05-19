@@ -1,2 +1,3 @@
 [buildhost]
-root@163.172.158.141
+# root@163.172.158.141
+localhost   ansible_connection=local
