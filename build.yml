@@ -62,9 +62,9 @@
     when: qt|changed
 
   - name: Copy configure script
-    template: src=files/configure-qt5.j2 dest="{{ buildroot }}/qt5/configure-qt5" mode=0755
+    template: src=files/configure-qt5.j2 dest="{{ buildroot }}/configure-qt5" mode=0755
     register: configure
     
   - name: Configure Qt5
-    shell: ./configure-qt5 chdir="{{ buildroot }}/qt5"
+    shell: ./configure-qt5 chdir="{{ buildroot }}"
     when: configure|changed

@@ -1,4 +1,4 @@
-exec ./configure \
+cd qt5 && ./configure \
      -static \
      -opengl es2 -device linux-rasp-pi-g++ \
      -device-option CROSS_COMPILE={{ toolchain_root }}/bin/{{ gcc_prefix }} \
