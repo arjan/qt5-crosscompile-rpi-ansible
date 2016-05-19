@@ -54,7 +54,7 @@
     shell: ./fixQualifiedLibraryPaths {{ mountpoint }}/ {{ toolchain_root }}/bin/{{ gcc_prefix }}gcc chdir="{{ buildroot }}"
 
   - name: Get Qt
-    git: repo=git://code.qt.io/qt/qt5.git dest="{{ buildroot }}/qt5" accept_hostkey=yes recursive=no
+    git: repo=git://code.qt.io/qt/qt5.git dest="{{ buildroot }}/qt5" accept_hostkey=yes recursive=no update=no
     register: qt
     
   - name: Init Qt5
